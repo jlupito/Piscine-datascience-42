@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./item.csv:/docker-entrypoint-initdb.d/item.csv
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${P_PWD}
+      - POSTGRES_USER=${P_USER}
+      - POSTGRES_DB=${P_DB}
+
+  dbeaver:
+    image: dbeaver/cloudbeaver:latest
+    ports:
+      - 8080:8978
+    environment:
+      - CB_INIT_CONFIG=${CB_CONF}
+      - CB_ADMIN_NAME=${CB_NAME}
+      - CB_ADMIN_PASSWORD={CB_PWD}
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
